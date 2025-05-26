@@ -2,8 +2,8 @@
     "sortOrder": [
         {
             "columnIndex": 2,
-            "ascending": true
+            "ascending": false
         }
     ],
-    "path": "~/GitHub/nyc-rat-abundance"
+    "path": "~/GitHub/nyc-rat-abundance/data/raw"
 }
