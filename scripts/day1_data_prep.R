@@ -3,11 +3,12 @@
 # Day 1 – Data Prep: preview a 5 k sample, then load & clean all ~912 k rows
 
 # 0) Install & load packages (run install.packages() once, then comment it out)
-install.packages(c("vroom", "dplyr", "stringr", "lubridate"))
+install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr"))
 library(vroom)
 library(dplyr)
 library(stringr)
 library(lubridate)
+library(readr)
 
 # 1) Path to raw 311 data
 data_path <- "data/raw/311_Service_Requests_from_2010_to_Present_20250526.csv"
@@ -110,3 +111,16 @@ message("✅ Clean & flagged: ", nrow(rats_clean), " rows; ",
         sum(rats_clean$bad_close), " bad_close, ",
         sum(rats_clean$stale_open), " stale_open")
 glimpse(rats_clean)
+
+# 5) Ensure a processed‐data folder exists
+if (!dir.exists("data/processed")) {
+  dir.create("data/processed", recursive = TRUE)
+}
+
+# 6) Export cleaned rats dataset
+write_csv(
+  rats_clean,
+  "data/processed/rats_clean.csv"
+)
+message("✏️ Saved rats_clean.csv to data/processed/")
+
