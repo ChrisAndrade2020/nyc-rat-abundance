@@ -1,0 +1,2 @@
+RTOOLS44_HOME = "C:/rtools44"
+PATH = "${RTOOLS44_HOME}/usr/bin;${RTOOLS44_HOME}/mingw64/bin;${PATH}"
