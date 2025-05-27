@@ -1,7 +1,3 @@
-# scripts/01_data_prep.R
-# ----------------------
-# Day 1 – Data Prep: preview a 5 k sample, then load & clean all ~912 k rows
-
 # 0) Install & load packages (run install.packages() once, then comment it out)
 install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr"))
 library(vroom)
@@ -30,9 +26,6 @@ print(names(rats_5k_sample))
 
 # 3) Parse dates, flag bad closes (pre-2010), compute days_open as of 2025-05-26,
 #    and also flag stale_open if days_open > 365
-library(dplyr)
-library(lubridate)
-library(stringr)
 
 # a) Define your fixed sentinel & snapshot dates
 sentinel_date <- as_datetime("2010-01-01 00:00:00")  # anything before this is bogus
