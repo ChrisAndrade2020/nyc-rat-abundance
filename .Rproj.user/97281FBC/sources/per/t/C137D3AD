@@ -1,0 +1,26 @@
+{
+    "id": "C137D3AD",
+    "path": "~/GitHub/nyc-rat-abundance/scripts/day1_data_prep.R",
+    "project_path": "scripts/day1_data_prep.R",
+    "type": "r_source",
+    "hash": "2145629220",
+    "contents": "",
+    "dirty": false,
+    "created": 1748319592297.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "11,25",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1748319483,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1748319483,
+    "read_only": false,
+    "read_only_alternatives": []
+}
