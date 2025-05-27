@@ -37,7 +37,7 @@ library(stringr)
 sentinel_date <- as_datetime("2010-01-01 00:00:00")  # anything before this is bogus
 snapshot_date <- as.Date("2025-05-26")               # cut-off for still-open
 
-rats_sample <- vroom(
+rats_clean <- vroom(
   file       = data_path,
   col_select = c(
     "Unique Key", "Created Date", "Closed Date", "Status",
@@ -106,7 +106,7 @@ rats_sample <- vroom(
   )
 
 # 4) Final check
-message("✅ Clean & flagged: ", nrow(rats_sample), " rows; ",
-        sum(rats_sample$bad_close), " bad_close, ",
-        sum(rats_sample$stale_open), " stale_open")
-glimpse(rats_sample)
+message("✅ Clean & flagged: ", nrow(rats_clean), " rows; ",
+        sum(rats_clean$bad_close), " bad_close, ",
+        sum(rats_clean$stale_open), " stale_open")
+glimpse(rats_clean)
