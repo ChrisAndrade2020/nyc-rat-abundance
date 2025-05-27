@@ -1,26 +1,26 @@
 {
-    "id": "53EAD44F",
-    "path": "~/GitHub/nyc-rat-abundance/scripts/00_setup_cmdstanr.R",
-    "project_path": "scripts/00_setup_cmdstanr.R",
+    "id": "9F11CA7E",
+    "path": "~/GitHub/nyc-rat-abundance/scripts/day1_data_prep.R",
+    "project_path": "scripts/day1_data_prep.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "3927435267",
     "contents": "",
     "dirty": false,
-    "created": 1748304499998.0,
+    "created": 1748316845122.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "12,3",
-        "scrollLine": "0"
+        "cursorPosition": "61,37",
+        "scrollLine": "46"
     },
     "folds": "",
-    "lastKnownWriteTime": 1748306240,
+    "lastKnownWriteTime": 1748317052,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1748306240245,
+    "last_content_update": 1748317052376,
     "read_only": false,
     "read_only_alternatives": []
 }

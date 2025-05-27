@@ -1,0 +1,83 @@
+# scripts/01_data_prep.R
+# ----------------------
+# Day 1 – Data Prep: preview a small sample, then load & filter the full ~912K rows
+
+# 0) Load libraries (run once)
+install.packages(c("vroom", "dplyr", "stringr", "lubridate"))
+library(vroom)
+library(dplyr)
+library(stringr)
+library(lubridate)
+
+# 1) Define path to the raw 311 CSV
+data_path <- "data/raw/311_Service_Requests_from_2010_to_Present_20250526.csv"
+
+# 2) Preview a sample of 5,000 rows
+rats_sample <- vroom(
+  file       = data_path,
+  n_max      = 5000,
+  col_select = c(
+    "Unique Key",
+    "Created Date",
+    "Closed Date",
+    "Status",
+    "Location Type",
+    "Incident Zip",
+    "Borough",
+    "BBL",
+    "Latitude",
+    "Longitude",
+    "Descriptor"
+  )
+)
+# Inspect the sample
+print(head(rats_sample, 5))
+print(names(rats_sample))
+
+# 3) Load & clean all ~912K rows into rats_sample, parsing dates explicitly
+rats_sample <- vroom(
+  file       = data_path,
+  col_select = c(
+    "Unique Key",
+    "Created Date",
+    "Closed Date",
+    "Status",
+    "Location Type",
+    "Incident Zip",
+    "Borough",
+    "BBL",
+    "Latitude",
+    "Longitude",
+    "Descriptor"
+  ),
+  col_types = cols(
+    `Unique Key`      = col_character(),
+    `Created Date`    = col_character(),  # read as text
+    `Closed Date`     = col_character(),  # read as text
+    Status            = col_character(),
+    `Location Type`   = col_character(),
+    `Incident Zip`    = col_character(),
+    Borough           = col_character(),
+    BBL               = col_character(),
+    Latitude          = col_double(),
+    Longitude         = col_double(),
+    Descriptor        = col_character()
+  )
+) %>%
+  # 3a) Parse dates with lubridate, compute days_open, drop raw fields
+  mutate(
+    created_dt = ymd_hms(`Created Date`),   # now true POSIXct
+    closed_dt  = ymd_hms(`Closed Date`),
+    days_open  = as.numeric(closed_dt - created_dt, units = "days")
+  ) %>%
+  select(-`Created Date`, -`Closed Date`, -Status) %>%
+  # 3b) Filter to rodent-related entries
+  filter(
+    str_starts(Descriptor, regex("Rat|Rodent|Mouse", ignore_case = TRUE)) |
+      str_detect(Descriptor,     regex("dropp|burrow|bait|nest|runway|gnaw", ignore_case = TRUE))
+  )
+
+# 4) Quick check
+message("✅ Loaded & cleaned: ", nrow(rats_sample), " rows")
+glimpse(rats_sample)  # you should now see non-NA created_dt and days_open
+
