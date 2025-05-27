@@ -1,2 +1,4 @@
 data/raw/311_Service_Requests_from_2010_to_Present_20250526.csv
-data/processed/rat_clean.csv
+
+# ignore all CSVs in processed 
+data/processed/*.csv
