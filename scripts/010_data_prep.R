@@ -1,7 +1,3 @@
-# scripts/01_data_prep.R
-# ----------------------
-# Day 1 – Data Prep: preview a 5 k sample, then load & clean all ~912 k rows
-
 # 0) Install & load packages (run install.packages() once, then comment it out)
 install.packages(c("vroom", "dplyr", "stringr", "lubridate"))
 library(vroom)
