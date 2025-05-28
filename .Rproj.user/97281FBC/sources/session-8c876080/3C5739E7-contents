@@ -1,9 +1,10 @@
 # 0) Install & load packages (run install.packages() once, then comment it out)
-install.packages(c("vroom", "dplyr", "stringr", "lubridate"))
+install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr"))
 library(vroom)
 library(dplyr)
 library(stringr)
 library(lubridate)
+library(readr)
 
 # 1) Path to raw 311 data
 data_path <- "data/raw/311_Service_Requests_from_2010_to_Present_20250526.csv"
@@ -25,9 +26,6 @@ print(names(rats_5k_sample))
 
 # 3) Parse dates, flag bad closes (pre-2010), compute days_open as of 2025-05-26,
 #    and also flag stale_open if days_open > 365
-library(dplyr)
-library(lubridate)
-library(stringr)
 
 # a) Define your fixed sentinel & snapshot dates
 sentinel_date <- as_datetime("2010-01-01 00:00:00")  # anything before this is bogus
@@ -106,3 +104,11 @@ message("✅ Clean & flagged: ", nrow(rats_clean), " rows; ",
         sum(rats_clean$bad_close), " bad_close, ",
         sum(rats_clean$stale_open), " stale_open")
 glimpse(rats_clean)
+
+# 5) Export cleaned rats dataset
+write_csv(
+  rats_clean,
+  "data/processed/rats_clean.csv"
+)
+message("✏️ Saved rats_clean.csv to data/processed/")
+
