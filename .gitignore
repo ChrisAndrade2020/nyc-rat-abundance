@@ -1,5 +1,5 @@
-# ignore all CSVs in raw 
-data/raw/*.csv
+# ignore all in raw 
+data/raw/
 
 # ignore all CSVs in processed 
 data/processed/*.csv
