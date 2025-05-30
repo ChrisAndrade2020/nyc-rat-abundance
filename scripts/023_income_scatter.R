@@ -1,37 +1,44 @@
-# Purpose: Aggregate rat calls and ACS data to tract level
-#          and compute call-rate vs. median income for Tableau.
+# Purpose: Build tract-level table of rat calls vs. median income for Tableau
 
-# 0) Load required packages
-install.packages("tidyverse")
-
-library(tidyverse)
+# 0) Load packages
 library(sf)
 library(dplyr)
 library(readr)
+library(stringr)
 
-# 1) Read in your enriched rat sightings (with GEOID) from the spatial join
-rats_enriched <- st_read("output/rat_clean.geojson")
+# 1) Read in your enriched rat sightings (with GEOID) 
+rats_enriched <- st_read("outputs/rat_clean.geojson")
 
-# 2) Derive tract ID (first 11 characters of the block-group GEOID)
-rats_enriched <- rats_enriched %>%
+# 2) Count calls per tract
+calls_by_tract <- rats_enriched %>%
+  mutate(tract = str_sub(GEOID, 1, 11)) %>%    # first 11 chars = tract
+  st_drop_geometry() %>%
+  count(tract, name = "calls")
+
+# 3) Read your ACS-by-BBL table and collapse to unique block-groups
+acs_bbl <- read_csv("data/raw/ACS.csv") 
+
+bg_acs <- acs_bbl %>%
+  distinct(GEOID, pop_tot, med_income) %>%     # one row per BG
   mutate(tract = str_sub(GEOID, 1, 11))
 
-# 2.5) Temp
-
-# 2.5a) take first five rows
-first5 <- rat_enriched %>% 
-  slice(1:5)
-
-# 2.5b) write them to CSV
-write_csv(first5, "output/rat_enriched_first5.csv")
-
-# 2.5c) sanity check. Lost 7.68% of matching points. Likely curbside and sidewalk(?) Too much data lost >5% 
-# 024_bg_acs_join to amend
-rats_enriched %>% 
-  st_drop_geometry() %>% 
+# 4) Aggregate to tract
+tract_acs <- bg_acs %>%
+  group_by(tract) %>%
   summarise(
-    total        = n(),
-    no_parcel    = sum(is.na(GEOID)),
-    pct_no_parcel= no_parcel / total * 100
-  )
+    pop_tot    = sum(pop_tot, na.rm = TRUE),
+    med_income = sum(med_income * pop_tot, na.rm = TRUE) / sum(pop_tot, na.rm = TRUE)
+  ) %>%
+  ungroup()
 
+# 5) Join calls + ACS, drop zero-pop tracts, compute rate per 10k
+income_scatter_df <- calls_by_tract %>%
+  left_join(tract_acs, by = "tract") %>%
+  filter(pop_tot > 0) %>%
+  mutate(rate_per_10k = calls / pop_tot * 10000)
+
+# 6) Write out for Tableau
+write_csv(income_scatter_df, "outputs/income_scatter.csv")
+
+message("✅ Wrote ", nrow(income_scatter_df), 
+        " tracts to outputs/income_scatter.csv")
