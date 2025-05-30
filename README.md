@@ -4,7 +4,7 @@
 
 ---
 
-## 📊 Visualisations Delivered
+## 📊 Visualisations Deliverables
 
 | Tab                | Chart                                                     | Notes                                  |
 | ------------------ | --------------------------------------------------------- | -------------------------------------- |
@@ -109,5 +109,3 @@ MIT—see `LICENSE` file.
 * NYC Open Data for 311 rat sightings
 * NYC Department of City Planning for MapPLUTO
 * U.S. Census Bureau for ACS estimates
-
-*Made with ♥ by the Data‑Engineering practice team.*
