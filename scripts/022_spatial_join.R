@@ -59,15 +59,15 @@ rat_enriched <- rat_bbl %>%
   left_join(pluto, by = "BBL") %>%
   left_join(acs,   by = "BBL")
 
-# 9) Ensure outputs folder exists
-if (!dir.exists("outputs")) dir.create("outputs", recursive = TRUE)
+# 9) Ensure output folder exists
+if (!dir.exists("output")) dir.create("output", recursive = TRUE)
 
 # 10) Write out enriched GeoJSON
 st_write(
   rat_enriched,
-  "outputs/rat_clean.geojson",
+  "output/rat_clean.geojson",
   driver     = "GeoJSON",
   delete_dsn = TRUE
 )
 
-message("✅ Spatial join complete: outputs/rat_clean.geojson written")  
+message("✅ Spatial join complete: outputsrat_clean.geojson written")  

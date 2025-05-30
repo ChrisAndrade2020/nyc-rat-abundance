@@ -1,5 +1,3 @@
-# scripts/00_setup_cmdstanr.R
-# ----------------------------
 # Purpose: Install and verify the full Stan toolchain (CmdStanR + Rtools) on Windows.
 # This script ensures you can compile and run Stan models from R.
 
