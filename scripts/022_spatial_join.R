@@ -1,3 +1,6 @@
+# Purpose: Pull 2019 ACS block-group estimates for NYC (population, median income, poverty),
+#          compute lot-level centroids via PLUTO, and write ACS×BBL lookup CSV.
+
 # 0) Load required packages
 library(sf)      # spatial data handling
 library(dplyr)   # data wrangling

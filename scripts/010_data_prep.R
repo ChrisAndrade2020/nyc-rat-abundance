@@ -1,3 +1,7 @@
+# Purpose: Clean raw 311 rat‐sighting data, select key fields, derive month & lump top location types,
+#          compute borough‐level call counts and rates per 10k using ACS population, 
+#          and write out rats_ready.csv and borough_rates.csv.
+
 # 0) Install & load packages (run install.packages() once, then comment it out)
 install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr"))
 library(vroom)

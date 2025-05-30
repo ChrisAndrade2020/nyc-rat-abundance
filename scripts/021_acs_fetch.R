@@ -1,3 +1,6 @@
+# Purpose: Pull 2019 ACS block-group estimates for NYC (population, median income, poverty),
+#          compute lot-level centroids via PLUTO, and write ACS×BBL lookup CSV.
+
 # 0) Install & load needed packages (once; then comment out install.packages calls)
 # install.packages(c("tidycensus", "sf", "dplyr", "readr", "stringr"))
 library(tidycensus)   # to pull ACS data
