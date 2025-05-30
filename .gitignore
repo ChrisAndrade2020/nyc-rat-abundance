@@ -35,7 +35,7 @@ data/raw/
 data/processed/*.csv
 
 # I dump all other intermediate outputs / figures here
-outputs/
+output/
 
 # ─────────────────────────────────────────────────────────────────────────────
 # End of .gitignore
