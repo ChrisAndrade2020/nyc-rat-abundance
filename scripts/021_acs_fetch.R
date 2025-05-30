@@ -33,7 +33,7 @@ message("🔄 Downloading ACS block-group data for NYC…")
 acs_bg <- get_acs(
   geography = "block group",
   variables = vars,
-  year      = 2019,
+  year      = 2023,
   state     = "NY",
   county    = c("Bronx", "Kings", "New York", "Queens", "Richmond"),
   output    = "wide",
