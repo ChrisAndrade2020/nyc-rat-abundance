@@ -70,4 +70,4 @@ st_write(
   delete_dsn = TRUE
 )
 
-message("✅ Spatial join complete: outputs/rat_clean.geojson written")
+message("✅ Spatial join complete: outputs/rat_clean.geojson written")  

@@ -85,4 +85,4 @@ message(
   nrow(acs_by_bbl),
   " lots; sum of unique block-group pop_tot = ",
   total_pop
-)
+) 
