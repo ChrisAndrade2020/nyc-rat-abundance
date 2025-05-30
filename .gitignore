@@ -4,5 +4,8 @@ data/raw/
 # ignore all CSVs in processed 
 data/processed/*.csv
 
+# ignore all in raw 
+outputs/
+
 # Ignore RStudio project cache
 .Rproj.user/
