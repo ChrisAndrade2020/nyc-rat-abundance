@@ -29,7 +29,7 @@ Thumbs.db           # Windows Explorer metadata
 # ─────────────────────────────────────────────────────────────────────────────
 
 # My raw data: if it’s small, I’ll track it; otherwise I download it in data-raw/
-# data/raw/
+data/raw/
 
 # I ignore any large, generated CSVs so they don’t bloat the repo
 data/processed/*.csv
