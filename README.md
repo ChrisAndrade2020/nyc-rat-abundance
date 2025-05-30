@@ -4,7 +4,7 @@
 
 ---
 
-## 📊 Visualisations Deliverables
+## 📊 Visualizations Deliverables
 
 | Tab                | Chart                                                     | Notes                                  |
 | ------------------ | --------------------------------------------------------- | -------------------------------------- |
