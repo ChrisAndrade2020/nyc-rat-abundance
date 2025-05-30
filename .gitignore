@@ -1,11 +1,42 @@
-# ignore all in raw 
-data/raw/
+# ─────────────────────────────────────────────────────────────────────────────
+# R / RStudio stuff I don’t want in Git
+# ─────────────────────────────────────────────────────────────────────────────
 
-# ignore all CSVs in processed 
+# I never want to commit my interactive history or workspace
+.Rhistory           # my command history
+.RData              # my saved workspace
+.RDataTmp*          # RStudio temp snapshots
+.Ruserdata          # RStudio user settings
+
+# RStudio project settings folder (it rebuilds automatically)
+.Rproj.user/        
+
+# knitr / R Markdown caches and figure dirs
+*_cache/            # chunk caches
+*_files/            # generated figures & supporting files
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OS metadata & temp files
+# ─────────────────────────────────────────────────────────────────────────────
+
+.DS_Store           # macOS Finder metadata
+Thumbs.db           # Windows Explorer metadata
+*.tmp               # random temp files
+*.log               # any logs I don’t need in Git
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Data folders
+# ─────────────────────────────────────────────────────────────────────────────
+
+# My raw data: if it’s small, I’ll track it; otherwise I download it in data-raw/
+# data/raw/
+
+# I ignore any large, generated CSVs so they don’t bloat the repo
 data/processed/*.csv
 
-# ignore all in raw 
+# I dump all other intermediate outputs / figures here
 outputs/
 
-# Ignore RStudio project cache
-.Rproj.user/
+# ─────────────────────────────────────────────────────────────────────────────
+# End of .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
