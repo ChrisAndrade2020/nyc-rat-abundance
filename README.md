@@ -58,7 +58,7 @@ $ cd nyc‑rat‑dashboard
 # 3. **Set your Census API key** (one‑time per machine)
 > Sys.setenv(CENSUS_API_KEY = "YOUR_KEY_HERE")
 
-# 4. Rebuild the whole pipeline (≈ 15 min on a laptop)
+# 4. Rebuild the whole pipeline (≈ 15±5 min)
 > source("run_script.R")
 ```
 
