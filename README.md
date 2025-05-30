@@ -6,13 +6,13 @@
 
 ## 📊 Visualizations Deliverables
 
-| Tab                | Chart                                                     | Notes                                  |
-| ------------------ | --------------------------------------------------------- | -------------------------------------- |
-| **Heat Map**       | Kernel‑density of sightings (time slider, borough filter) | Uses `rats_ready.csv` points           |
-| **Monthly Trend**  | City‑wide monthly calls                                   | Derived from `rats_ready.csv`          |
-| **Location Type**  | Stacked bar of top 8 location types                       | `LocationType` lumped in script        |
-| **Borough Rate**   | Calls per 10 k residents                                  | Joins borough counts to ACS population |
-| **Income Scatter** | Calls/10 k vs. median household income (tract level)      | Built from `income_scatter.csv`        |
+#| Tab                | Chart                                                     | Notes                                  |
+#| ------------------ | --------------------------------------------------------- | -------------------------------------- |
+#| **Heat Map**       | Kernel‑density of sightings (time slider, borough filter) | Uses `rats_ready.csv` points           |
+#| **Monthly Trend**  | City‑wide monthly calls                                   | Derived from `rats_ready.csv`          |
+#| **Location Type**  | Stacked bar of top 8 location types                       | `LocationType` lumped in script        |
+#| **Borough Rate**   | Calls per 10 k residents                                  | Joins borough counts to ACS population |
+#| **Income Scatter** | Calls/10 k vs. median household income (tract level)      | Built from `income_scatter.csv`        |
 
 The published workbook is here → *TBA*.
 
