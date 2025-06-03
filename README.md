@@ -1,6 +1,6 @@
 # NYC Rat Sightings Dashboard 🚇🐀
 
-[![License](https://img.shields.io/github/license/USERNAME/REPO.svg)](LICENSE)
+[![License](https://img.shields.io/github/license/ChrisAndrade2020/nyc-rat-abundance.svg)](LICENSE)
 
 > A reproducible pipeline that cleans NYC 311 “Rat Sightings” data, enriches it with tax‑lot (PLUTO) and socioeconomic context (ACS), and feeds a Tableau Public workbook with five interactive visualisations.
 
