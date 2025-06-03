@@ -15,7 +15,7 @@
 | **Income Scatter** | Calls/10 k vs. median household income (tract level)        | Built from `income_scatter.csv`        |
 | **TBA**            | Proof of Concept: Quarterly Heterogeneous Capture–Recapture | TBA                                    |
 
-The published workbook is here → *TBA*.
+The published dashboard is here → [Tableau Dashboard](https://public.tableau.com/app/profile/chris.kevin.andrade/viz/NYCRatSightingsDashboard_17486367234910/Dashboard1?publish=yes).
 
 ---
 
