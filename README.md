@@ -93,12 +93,6 @@ Each script is extensively commented—open any file for a guided walkthrough.
 
 ---
 
-## 🤝 Contributing
-
-Pull requests welcome! Please keep code style consistent (tidyverse) and include a brief description + before/after screenshots for any viz tweaks.
-
----
-
 ## 📜 License
 
 MIT
@@ -107,6 +101,6 @@ MIT
 
 ## 🙏 Acknowledgements
 
-* NYC Open Data for 311 rat sightings
-* NYC Department of City Planning for MapPLUTO
-* U.S. Census Bureau for ACS estimates
+* [NYC Open Data for 311 rat sightings](https://opendata.cityofnewyork.us/data/)
+* [NYC Department of City Planning for MapPLUTO](https://www.nyc.gov/content/planning/pages/resources)
+* [U.S. Census Bureau for ACS estimates](https://www.census.gov/data.html)
