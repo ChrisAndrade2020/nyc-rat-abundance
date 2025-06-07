@@ -20,7 +20,7 @@ Thumbs.db
 
 # Raw data: track only ACS and the two .7z archives
 data/raw/*
-!data/raw/ACS
+!data/raw/ACS.csv
 !data/raw/MapPLUTO_compressed.7z
 !data/raw/311_Calls.7z
 
