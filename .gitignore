@@ -24,8 +24,10 @@ data/raw/*
 !data/raw/MapPLUTO_compressed.7z
 !data/raw/311_Calls.7z
 
-# Processed / cleaned data (fully derived)
-data/processed/
+# Processed data: ignore everything *except* the README placeholder
+data/processed/*
+!data/processed/README.md
 
-# Outputs / figures / intermediates
-output/
+# Output: ignore everything *except* the README placeholder
+output/*
+!output/README.md
