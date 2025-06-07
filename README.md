@@ -53,13 +53,20 @@ The published dashboard is here → [Tableau Dashboard](https://public.tableau.
 $ git clone https://github.com/your‑org/nyc‑rat‑dashboard.git
 $ cd nyc‑rat‑dashboard
 
-# 2. Open R (or RStudio) and install deps once
+# 2. Manually unpack raw archives
+#    Before running anything, extract all .zip (and .7z) files in data/raw/
+#    • Windows: right-click each → “Extract All…” or use 7-Zip → “Extract Here”
+#    • macOS/Linux: `unzip data/raw/*.zip`
+#
+#    This will drop MapPLUTO.dbf, 311_Calls.csv, etc. into data/raw/.
+
+# 3. Open R (or RStudio) and install deps once
 > source("scripts/000_setup_cmdstanr.R")   # installs CmdStan if needed
 
-# 3. **Set your Census API key** (one‑time per machine)
+# 4. **Set your Census API key** (one-time per machine)
 > Sys.setenv(CENSUS_API_KEY = "YOUR_KEY_HERE")
 
-# 4. Rebuild the whole pipeline (≈ 15±5 min)
+# 5. Rebuild the whole pipeline (≈ 15±5 min)
 > source("run_script.R")
 ```
 
