@@ -8,3 +8,19 @@
 # 4) Fit the Stan-based QHCR model
 # 5) Export posterior summaries to CSV
 # -----------------------------------------------------------------------------
+
+# 0) Libraries ---------------------------------------------------------------
+library(sf)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(rstan)
+library(posterior)
+library(readr)
+
+# 1) Load enriched rat sightings ---------------------------------------------
+rats_sf <- sf::st_read(
+  "output/rats_enriched.geojson",
+  quiet = TRUE
+) %>%
+  st_drop_geometry()
