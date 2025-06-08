@@ -13,7 +13,7 @@
 ## 0) Install + load packages ----
 #    Run `install.packages()` the *very first* time, then comment it out ✂️.
 #    Keeping it here (commented) reminds newcomers what’s needed.
-install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr"))
+install.packages(c("vroom", "dplyr", "stringr", "lubridate", "readr", "rstudioapi"))
 library(vroom)      # Fast CSV reader (multi-threaded)
 library(dplyr)      # Data wrangling verbs (filter/ mutate / summarise …)
 library(stringr)    # Regex helpers that read like English
