@@ -24,3 +24,11 @@ rats_sf <- sf::st_read(
   quiet = TRUE
 ) %>%
   st_drop_geometry()
+
+# 2) Assign each call to a quarter -------------------------------------------
+rats_q <- rats_sf %>%
+  mutate(
+    call_date = ymd_hms(call_date),
+    quarter  = floor_date(call_date, unit = "quarter")
+  ) %>%
+  filter(!is.na(CD_ID))
