@@ -40,6 +40,21 @@ rat_sf <- st_as_sf(
   remove = FALSE
 )
 
+## 3b) Read Community District boundaries -------------------------------------
+cd_sf <- sf::st_read(
+    "data/raw/NYC_Community_Districts/NYC_Community_Districts.shp",
+    quiet = TRUE
+  ) %>% 
+    st_transform(crs = st_crs(rat_sf))
+
+## 3c) Join CD_ID onto each rat point -----------------------------------------
+rat_sf <- rat_sf %>%
+    st_join(
+        cd_sf %>% select(CD_ID = boro_cd),  # rename the shapefile’s boro_cd field
+        join = st_within,
+        left = TRUE
+      )
+
 ## 4) Read PLUTO parcels & ensure valid geometries -----------------------------
 bbl_sf <- st_read("data/raw/MapPLUTO.shp", quiet = TRUE) %>%
   st_transform(crs = st_crs(rat_sf))
