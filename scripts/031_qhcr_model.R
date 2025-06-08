@@ -25,27 +25,26 @@ rats_sf <- sf::st_read(
 ) %>%
   st_drop_geometry()
 
-# 2) Assign each call to a quarter -------------------------------------------
+# 2) Assign each sighting to a quarter ---------------------------------------
+# Uses `created_dt` as the timestamp field
 rats_q <- rats_sf %>%
   mutate(
-    call_date = ymd_hms(call_date),
-    quarter  = floor_date(call_date, unit = "quarter")
+    call_date = ymd_hms(created_dt),  # parse the actual date-time field
+    quarter   = floor_date(call_date, unit = "quarter")
   ) %>%
   filter(!is.na(CD_ID))
 
 # 3) Build capture history matrix --------------------------------------------
-# Identify unique districts and occasions
 districts <- sort(unique(rats_q$CD_ID))
 occasions <- sort(unique(rats_q$quarter))
 
-# Count sightings per district × quarter
 cap_hist <- rats_q %>%
   group_by(CD_ID, quarter) %>%
   summarise(calls = n(), .groups = "drop") %>%
   complete(
-    CD_ID  = districts,
+    CD_ID   = districts,
     quarter = occasions,
-    fill = list(calls = 0)
+    fill    = list(calls = 0)
   ) %>%
   arrange(match(CD_ID, districts), quarter) %>%
   pivot_wider(
@@ -54,7 +53,7 @@ cap_hist <- rats_q %>%
   )
 
 # Convert to matrix for Stan
-count_matrix <- as.matrix(cap_hist[ , as.character(occasions)])
+count_matrix <- as.matrix(cap_hist[, as.character(occasions)])
 
 # 4) Prepare data list for Stan ----------------------------------------------
 stan_data <- list(
@@ -64,7 +63,6 @@ stan_data <- list(
 )
 
 # 5) Fit the QHCR model ------------------------------------------------------
-# Ensure you have a Stan model at `stan/qhcr_model.stan`
 stan_model <- rstan::stan_model("stan/qhcr_model.stan")
 fit <- rstan::sampling(
   object = stan_model,
@@ -73,3 +71,29 @@ fit <- rstan::sampling(
   chains = 4,
   cores  = parallel::detectCores()
 )
+
+# 6) Extract posterior summaries ---------------------------------------------
+post <- as_draws_df(fit)
+
+lambda_summ <- post %>%
+  select(starts_with("lambda[")) %>%
+  summarise_draws(
+    mean,
+    ~quantile(.x, c(0.025, 0.975))
+  ) %>%
+  rename(
+    estimate = mean,
+    lower    = `2.5%`,
+    upper    = `97.5%`
+  ) %>%
+  mutate(
+    CD_ID = as.integer(str_extract(variable, "\\d+(?=\\])"))
+  ) %>%
+  select(CD_ID, estimate, lower, upper)
+
+# 7) Export to CSV -----------------------------------------------------------
+write_csv(
+  lambda_summ,
+  file = "output/district_qhcr.csv"
+)
+message("✅ QHCR model complete – wrote output/district_qhcr.csv")
