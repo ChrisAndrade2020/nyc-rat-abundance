@@ -32,3 +32,44 @@ rats_q <- rats_sf %>%
     quarter  = floor_date(call_date, unit = "quarter")
   ) %>%
   filter(!is.na(CD_ID))
+
+# 3) Build capture history matrix --------------------------------------------
+# Identify unique districts and occasions
+districts <- sort(unique(rats_q$CD_ID))
+occasions <- sort(unique(rats_q$quarter))
+
+# Count sightings per district × quarter
+cap_hist <- rats_q %>%
+  group_by(CD_ID, quarter) %>%
+  summarise(calls = n(), .groups = "drop") %>%
+  complete(
+    CD_ID  = districts,
+    quarter = occasions,
+    fill = list(calls = 0)
+  ) %>%
+  arrange(match(CD_ID, districts), quarter) %>%
+  pivot_wider(
+    names_from  = quarter,
+    values_from = calls
+  )
+
+# Convert to matrix for Stan
+count_matrix <- as.matrix(cap_hist[ , as.character(occasions)])
+
+# 4) Prepare data list for Stan ----------------------------------------------
+stan_data <- list(
+  D = nrow(count_matrix),     # number of districts
+  T = ncol(count_matrix),     # number of capture occasions (quarters)
+  y = count_matrix            # counts matrix
+)
+
+# 5) Fit the QHCR model ------------------------------------------------------
+# Ensure you have a Stan model at `stan/qhcr_model.stan`
+stan_model <- rstan::stan_model("stan/qhcr_model.stan")
+fit <- rstan::sampling(
+  object = stan_model,
+  data   = stan_data,
+  iter   = 2000,
+  chains = 4,
+  cores  = parallel::detectCores()
+)
