@@ -8,16 +8,17 @@ library(lubridate)
 library(sf)
 library(readr)
 
-# 1) Read enriched points
+# 1) Read enriched points (with CD_ID)
 rats <- sf::st_read("output/rats_enriched.geojson", quiet = TRUE) %>%
   sf::st_drop_geometry()
 
-# 2) Aggregate to one row per date
-daily_counts <- rats %>%
+# 2) Build daily counts by CD_ID
+daily_cd <- rats %>%
   mutate(date = as_date(ymd_hms(created_dt))) %>%
-  group_by(date) %>%
+  filter(!is.na(CD_ID)) %>%
+  group_by(CD_ID, date) %>%
   summarise(calls = n(), .groups = "drop")
 
-# 3) Write CSV for Tableau
-write_csv(daily_counts, "output/daily_rats.csv")
-message("✅ Wrote daily counts to output/daily_rats.csv")
+# 3) Write out
+write_csv(daily_cd, "output/daily_rats_by_cd.csv")
+message("✅ Wrote per-CD daily counts to output/daily_rats_by_cd.csv")
