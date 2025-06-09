@@ -57,16 +57,16 @@ stan_data <- list(
   y = count_matrix
 )
 
-# 5) Fit QHCR model
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-stan_mod <- rstan::stan_model("stan/qhcr_model.stan")
+# 5) Fit QHCR model  <-- keep comment header
+stan_mod <- rstan::stan_model("stan/qhcr_model_upgraded.stan")   # <-- new path
 fit <- rstan::sampling(
   stan_mod,
   data   = stan_data,
   iter   = 2000,
-  chains = 4
+  chains = 4,
+  control = list(adapt_delta = 0.9, max_treedepth = 12)          # <-- helps avoid divergences
 )
+
 
 # 6) Extract posterior summaries and map back to actual CD_ID values
 # 'lambda[d]' in Stan corresponds to districts[d]
