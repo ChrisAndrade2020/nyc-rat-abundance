@@ -90,6 +90,25 @@ lambda_summ <- post %>%
   ) %>%
   select(CD_ID, estimate, lower, upper)
 
+# 6b) Extract quarter effects for seasonality viz -----------------------------
+delta_summ <- post %>%                     # 'post' came from as_draws_df(fit)
+  select(starts_with("delta[")) %>%
+  summarise_draws(mean,
+                  ~quantile(.x, c(0.025, 0.975))) %>%
+  rename(
+    estimate = mean,
+    lower    = `2.5%`,
+    upper    = `97.5%`
+  ) %>%
+  mutate(
+    idx     = as.integer(stringr::str_extract(variable, "(?<=\\[)\\d+(?=\\])")),
+    quarter = occasions[idx]               # occasions vector you built earlier
+  ) %>%
+  select(quarter, estimate, lower, upper)
+
+write_csv(delta_summ, "output/quarter_effects.csv")
+
+
 # 7) Export to CSV
 write_csv(lambda_summ, "output/district_qhcr.csv")
 message("✅ QHCR model complete – wrote output/district_qhcr.csv")
