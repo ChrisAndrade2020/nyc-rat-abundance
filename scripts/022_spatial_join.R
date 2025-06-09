@@ -50,7 +50,7 @@ cd_sf <- sf::st_read(
 ## 3c) Join CD_ID onto each rat point -----------------------------------------
 rat_sf <- rat_sf %>%
     st_join(
-        cd_sf %>% select(CD_ID = boro_cd),  # rename the shapefile’s boro_cd field
+        cd_sf %>% select(CD_ID = BoroCD),  # rename the shapefile’s BoroCD field
         join = st_within,
         left = TRUE
       )
