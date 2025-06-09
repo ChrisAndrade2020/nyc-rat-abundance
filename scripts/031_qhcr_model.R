@@ -110,5 +110,5 @@ write_csv(delta_summ, "output/quarter_effects.csv")
 
 
 # 7) Export to CSV
-write_csv(lambda_summ, "output/district_qhcr.csv")
-message("✅ QHCR model complete – wrote output/district_qhcr.csv")
+write_csv(lambda_summ, "output/district_qhcr_v2.csv")
+message("✅ QHCR model complete – wrote output/district_qhcr._v2csv")
