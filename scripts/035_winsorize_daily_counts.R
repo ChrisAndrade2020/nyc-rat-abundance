@@ -14,7 +14,7 @@ daily_cd <- read_csv("output/daily_rats_by_cd.csv",
                      show_col_types = FALSE)
 
 # ── 2) Choose a threshold -----------------------------------------------------
-P <- 0.9999                     # ← change to 0.995 or 0.975 if you prefer
+P <- 0.99                     # ← change to 0.995 or 0.975 if you prefer
 cap_val <- quantile(daily_cd$calls, P, na.rm = TRUE)
 
 message("Winsorising at the ", P*100, "th percentile: cap = ", cap_val)
