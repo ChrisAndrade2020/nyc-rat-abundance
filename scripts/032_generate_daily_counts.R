@@ -8,14 +8,17 @@ library(lubridate)
 library(sf)
 library(readr)
 
-rats <- sf::st_read("output/rats_enriched.geojson", quiet=TRUE) %>%
-  st_drop_geometry() %>%
+# 1) Read enriched points (with CD_ID)
+rats <- sf::st_read("output/rats_enriched.geojson", quiet = TRUE) %>%
+  sf::st_drop_geometry()
+
+# 2) Build daily counts by CD_ID
+daily_cd <- rats %>%
+  mutate(date = as_date(ymd_hms(created_dt))) %>%
   filter(!is.na(CD_ID)) %>%
-  mutate(quarter = floor_date(ymd_hms(created_dt), unit="quarter"))
+  group_by(CD_ID, date) %>%
+  summarise(calls = n(), .groups = "drop")
 
-quarterly_cd <- rats %>%
-  group_by(CD_ID, quarter) %>%
-  summarise(calls = n(), .groups="drop")
-
-write_csv(quarterly_cd, "output/quarterly_rats_by_cd.csv")
-message("✅ Wrote per-CD quarterly counts to output/quarterly_rats_by_cd.csv")
+# 3) Write out
+write_csv(daily_cd, "output/daily_rats_by_cd.csv")
+message("✅ Wrote per-CD daily counts to output/daily_rats_by_cd.csv")
