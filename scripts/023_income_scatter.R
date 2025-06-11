@@ -52,7 +52,10 @@ tract_acs <- bg_acs %>%
 ## 5) Combine calls + demographics --------------------------------------------
 income_scatter_df <- calls_by_tract %>%
   left_join(tract_acs, by = "tract") %>%
-  filter(pop_tot > 0) %>%
+  filter(
+    med_income > 0,
+    pop_tot   >= 200
+  ) %>%
   mutate(
     rate_per_10k = calls / pop_tot * 10000
   )
