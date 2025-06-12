@@ -72,6 +72,8 @@ fit <- rstan::sampling(
 # 'lambda[d]' in Stan corresponds to districts[d]
 post <- as_draws_df(fit)
 
+write_rds(post, "output/qhcr_draws.rds")
+
 lambda_summ <- post %>%
   select(starts_with("lambda[")) %>%
   summarise_draws(

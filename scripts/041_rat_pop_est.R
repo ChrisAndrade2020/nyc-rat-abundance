@@ -1,89 +1,82 @@
-# Estimate NYC rat populations by year (2010–2024), with 95% CI,
-# anchored to 2010 = 2,000,000 rats, using QHCR model outputs.
+# Generates yearly rat-population estimates with 95% CI via full-posterior draws.
 #
 # Inputs:
-#  • output/district_qhcr_v2.csv    (columns: CD_ID, estimate, lower, upper)
-#  • output/quarter_effects.csv     (columns: quarter, estimate, lower, upper)
-#
+#  • output/qhcr_draws.rds
+#  • output/quarter_effects.csv
 # Output:
 #  • output/yearly_rat_population.csv
-#    columns:
-#      year,
-#      mean_qhcr,   mean_low,   mean_high,
-#      rat_index,   rat_index_low,   rat_index_high,
-#      estimated_rats,   rats_low,   rats_high
+# Columns:
+#    year, rat_index, rat_index_low, rat_index_high,
+#    estimated_rats, rats_low, rats_high
 
 library(readr)
 library(dplyr)
 library(lubridate)
+library(posterior)
+library(tidyr)
 
-# 1) Read Stan summaries ------------------------------------------------------
-lambda <- read_csv("output/district_qhcr_v2.csv", show_col_types = FALSE)
-delta  <- read_csv("output/quarter_effects.csv",  show_col_types = FALSE)
+# 1) Load posterior draws & quarter metadata
+draws     <- read_rds("output/qhcr_draws.rds")
+occasions <- read_csv("output/quarter_effects.csv", show_col_types = FALSE)$quarter
 
-# 2) Exponentiate log‐scale outputs → linear abundances/factors ----------------
-lambda <- lambda %>%
+# 2) Compute city_mean per draw from lambda draws
+lambda_draws <- draws %>%
+  select(starts_with("lambda[")) %>%
+  mutate(draw = row_number()) %>%
+  pivot_longer(-draw, names_to="param", values_to="log_lambda") %>%
+  mutate(lambda = exp(log_lambda)) %>%
+  group_by(draw) %>%
+  summarise(city_mean = mean(lambda), .groups="drop")
+
+# 3) Expand delta draws to quarters, compute q_abund
+delta_draws <- draws %>%
+  select(starts_with("delta[")) %>%
+  mutate(draw = row_number()) %>%
+  pivot_longer(-draw, names_to="param", values_to="log_delta") %>%
   mutate(
-    abund_est  = exp(estimate),
-    abund_low  = exp(lower),
-    abund_high = exp(upper)
-  )
+    q_idx   = as.integer(gsub(".*\\[(\\d+)\\].*", "\\1", param)),
+    quarter = as.Date(occasions[q_idx]),
+    factor  = exp(log_delta),
+    year    = year(quarter)
+  ) 
 
-delta <- delta %>%
+city_q <- delta_draws %>%
+  left_join(lambda_draws, by="draw") %>%
+  mutate(q_abund = city_mean * factor)
+
+# 4) Yearly mean per draw
+yearly_draw <- city_q %>%
+  group_by(draw, year) %>%
+  summarise(
+    mean_qhcr = mean(q_abund),
+    .groups   = "drop"
+  ) %>%
+  group_by(draw) %>%
   mutate(
-    factor_est  = exp(estimate),
-    factor_low  = exp(lower),
-    factor_high = exp(upper)
-  )
+    rat_index = mean_qhcr / mean_qhcr[year == 2010]
+  ) %>%
+  ungroup()
 
-# 3) Compute citywide baseline abundances (constant) --------------------------
-lambda_bar_est  <- mean(lambda$abund_est,  na.rm = TRUE)
-lambda_bar_low  <- mean(lambda$abund_low,  na.rm = TRUE)
-lambda_bar_high <- mean(lambda$abund_high, na.rm = TRUE)
-
-# 4) Build quarterly citywide abundance --------------------------------------
-delta_q <- delta %>%
-  mutate(
-    year        = year(as.Date(quarter)),
-    q_abund_est = lambda_bar_est  * factor_est,
-    q_abund_low = lambda_bar_low  * factor_low,
-    q_abund_high= lambda_bar_high * factor_high
-  )
-
-# 5) Aggregate to annual means ------------------------------------------------
-annual <- delta_q %>%
+# 5) Summarise posterior quantiles per year
+yearly_ci <- yearly_draw %>%
   group_by(year) %>%
   summarise(
-    mean_qhcr = mean(q_abund_est, na.rm = TRUE),
-    mean_low  = mean(q_abund_low, na.rm = TRUE),
-    mean_high = mean(q_abund_high, na.rm = TRUE),
-    .groups = "drop"
+    rat_index      = mean(rat_index),
+    rat_index_low  = quantile(rat_index, 0.025),
+    rat_index_high = quantile(rat_index, 0.975),
+    .groups        = "drop"
   ) %>%
-  arrange(year)
+  filter(year <= 2024)
 
-# 6) Compute rat_index relative to 2010 ----------------------------------------
-baseline_est  <- annual$mean_qhcr[annual$year == 2010]
-baseline_low  <- annual$mean_low[annual$year == 2010]
-baseline_high <- annual$mean_high[annual$year == 2010]
-
-annual <- annual %>%
-  mutate(
-    rat_index      = mean_qhcr      / baseline_est,
-    rat_index_low  = mean_low       / baseline_low,
-    rat_index_high = mean_high      / baseline_high
-  )
-
-# 7) Estimate absolute rats (anchor: 2010 = 2,000,000) ------------------------
+# 6) Anchor 2010 = 2,000,000 rats → absolute counts
 anchor_rats <- 2e6
-
-annual_out <- annual %>%
-  filter(year <= 2024) %>%  # drop incomplete 2025
+yearly_out <- yearly_ci %>%
   mutate(
     estimated_rats = rat_index      * anchor_rats,
     rats_low       = rat_index_low  * anchor_rats,
     rats_high      = rat_index_high * anchor_rats
   )
 
-# 8) Write output for Tableau -------------------------------------------------
-write_csv(annual_out, "output/yearly_rat_population.csv")
-message("✅ Wrote output/yearly_rat_population.csv with ", nrow(annual_out), " rows")
+# 7) Write result for Tableau
+write_csv(yearly_out, "output/yearly_rat_population.csv")
+message("✅ Wrote output/yearly_rat_population.csv (", nrow(yearly_out), " rows)")
