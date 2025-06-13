@@ -6,16 +6,9 @@
 
 ## 📊 Visualizations Deliverables
 
-| Tab                | Chart                                                       | Notes                                  |
-| ------------------ | ----------------------------------------------------------- | -------------------------------------- |
-| **Heat Map**       | Kernel‑density of sightings (time slider, borough filter)   | Uses `rats_ready.csv` points           |
-| **Monthly Trend**  | City‑wide monthly calls                                     | Derived from `rats_ready.csv`          |
-| **Location Type**  | Stacked bar of top 7 location types                         | `LocationType` lumped in script        |
-| **Borough Rate**   | Calls per 10 k residents                                    | Joins borough counts to ACS population |
-| **Income Scatter** | Calls/10 k vs. median household income (tract level)        | Built from `income_scatter.csv`        |
-| **TBA**            | Proof of Concept: Quarterly Heterogeneous Capture–Recapture | TBA                                    |
+---To be updated--
 
-The published dashboard is here → [Tableau Dashboard](https://public.tableau.com/app/profile/chris.kevin.andrade/viz/NYCRatSightingsDashboard_17486367234910/Dashboard1?publish=yes).
+The published dashboard is here → [Tableau Dashboard](https://public.tableau.com/app/profile/chris.kevin.andrade/viz/NYCRatSightingsDashboard2_0/Rats_Of_NYC).
 
 ---
 
