@@ -6,43 +6,21 @@
 
 ## 📊 Visualizations Deliverables
 
-| Tab                | Chart                                                       | Notes                                  |
-| ------------------ | ----------------------------------------------------------- | -------------------------------------- |
-| **Heat Map**       | Kernel‑density of sightings (time slider, borough filter)   | Uses `rats_ready.csv` points           |
-| **Monthly Trend**  | City‑wide monthly calls                                     | Derived from `rats_ready.csv`          |
-| **Location Type**  | Stacked bar of top 7 location types                         | `LocationType` lumped in script        |
-| **Borough Rate**   | Calls per 10 k residents                                    | Joins borough counts to ACS population |
-| **Income Scatter** | Calls/10 k vs. median household income (tract level)        | Built from `income_scatter.csv`        |
-| **TBA**            | Proof of Concept: Quarterly Heterogeneous Capture–Recapture | TBA                                    |
+---To be updated--
 
-The published dashboard is here → [Tableau Dashboard](https://public.tableau.com/app/profile/chris.kevin.andrade/viz/NYCRatSightingsDashboard_17486367234910/Dashboard1?publish=yes).
+The published dashboard is here → [Tableau Dashboard](https://public.tableau.com/app/profile/chris.kevin.andrade/viz/NYCRatSightingsDashboard2_0/Rats_Of_NYC).
 
 ---
 
 ## 🗂️ Repository Structure
 
 ```
-├─ data/
-│  ├─ raw/            # untouched downloads (311 CSV, MapPLUTO shapefile)
-│  └─ processed/      # cleaned & enriched artefacts for analysis
-├─ output/            # GeoJSON + CSV files used directly by Tableau
-├─ scripts/           # numbered R scripts (see below)
-│  └─ …
-├─ run_script.R       # master driver that rebuilds everything
-└─ README.md
+--To be updated--
 ```
 
 ### Key Data Products
 
-| File                               | Purpose                               |
-| ---------------------------------- | ------------------------------------- |
-| `data/processed/rats_ready.csv`    | Point‑level cleaned sightings         |
-| `data/processed/borough_rates.csv` | Borough call counts + rate per 10 k   |
-| `data/processed/ACS.csv`           | Block‑group ACS metrics keyed by BBL  |
-| `output/rats_enriched.geojson`     | Sightings with PLUTO + ACS attributes |
-| `output/income_scatter.csv`        | Tract‑level scatter data              |
-| `output/rat_with_bg_ACS_point.csv` | Point‑level ACS join (BG)             |
-| `output/bg_calls_ACS_summary.csv`  | BG summary with call rate             |
+--To be updated--
 
 ---
 
@@ -76,18 +54,7 @@ After the final 🎉 message you can connect Tableau to the CSV/GeoJSON outputs 
 
 ## 🛠️ Scripts Breakdown
 
-| Order | Script                       | What it does                                                 |
-| ----- | ---------------------------- | ------------------------------------------------------------ |
-| 000   | **setup\_cmdstanr.R**        | Installs & tests CmdStan C++ toolchain (only once)           |
-| 011   | **data\_prep.R**             | Cleans raw 311 CSV, flags bad closes, saves `rats_clean.csv` |
-| 012   | **data\_prep\_derivation.R** | Creates `rats_ready.csv` & `borough_rates.csv`               |
-| 021   | **acs\_fetch.R**             | Downloads ACS 2023 BG metrics → `ACS.csv`                    |
-| 022   | **spatial\_join.R**          | Adds PLUTO & ACS to sightings → `rats_enriched.geojson`      |
-| 023   | **income\_scatter.R**        | Builds tract‑level scatter data                              |
-| 024   | **bg\_acs\_join.R**          | Attaches BG ACS to points + BG summary                       |
-| run   | **run\_script.R**            | Runs everything above & checks outputs                       |
-
-Each script is extensively commented—open any file for a guided walkthrough.
+--To be updated--
 
 ---
 
