@@ -1,31 +1,30 @@
-#  Reads output/daily_rats_by_cd_checked.csv   (or daily_rats_by_cd.csv)
-#  Caps the 'calls' field at the 99th-percentile (adjustable)
-#  Writes output/daily_rats_by_cd_win.csv
-#
-#  In Tableau:
-#     Use  calls_capped  for colour / table-calcs
-#     Keep  calls        in tooltips so the 229 spike is still visible
+# ───────────────────────────────────────────────────────────
+# Script: 035_winsorize_daily_counts.R
+# Purpose: Cap (winsorize) daily counts at the 99th percentile for visualization
+# Inputs:  output/daily_rats_by_cd.csv
+# Outputs: output/daily_rats_by_cd_win.csv
+# Depends: dplyr, readr
+# ───────────────────────────────────────────────────────────
 
+# 1. Load data-wrangling libraries
 library(dplyr)
 library(readr)
 
-# ── 1) Read -------------------------------------------------------------------
-daily_cd <- read_csv("output/daily_rats_by_cd.csv",
-                     show_col_types = FALSE)
+# 2. Read daily counts CSV
+daily_cd <- read_csv("output/daily_rats_by_cd.csv", show_col_types = FALSE)
 
-# ── 2) Choose a threshold -----------------------------------------------------
-P <- 0.99                     # ← change to 0.995 or 0.975 if you prefer
+# 3. Determine the winsorization threshold (99th percentile)
+P      <- 0.99
 cap_val <- quantile(daily_cd$calls, P, na.rm = TRUE)
+message("Capping calls at the ", P*100, "th percentile: ", cap_val)
 
-message("Winsorising at the ", P*100, "th percentile: cap = ", cap_val)
-
-# ── 3) Add capped column ------------------------------------------------------
+# 4. Add capped value and flag to each row
 daily_cd <- daily_cd %>%
   mutate(
     calls_capped = pmin(calls, cap_val),
-    capped_flag  = calls > cap_val       # TRUE if the original was trimmed
+    capped_flag  = calls > cap_val
   )
 
-# ── 4) Write out --------------------------------------------------------------
+# 5. Write out the winsorized counts CSV
 write_csv(daily_cd, "output/daily_rats_by_cd_win.csv")
-message("✅ Wrote winsorised daily counts to output/daily_rats_by_cd_win.csv")
+message("Wrote winsorized daily counts to output/daily_rats_by_cd_win.csv")

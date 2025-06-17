@@ -1,76 +1,64 @@
-# 024_bg_acs_join.R ------------------------------------------------------------
-#
-# Goal
-# ----
-# 1. Attach ACS block‑group socioeconomic columns (population, median income,
-#    poverty count) to **each** rat sighting (point‑level).
-# 2. Summarise at the block‑group level to get calls + call‑rate per 10 000.
-# 3. Save both products for Tableau: a point CSV and a BG summary CSV.
-#
-# Prereqs
-# • You ran 022_spatial_join.R → `output/rats_enriched.geojson` exists.
-# • You have a Census API key in the env‑var `CENSUS_API_KEY`.
-# -----------------------------------------------------------------------------
+# ───────────────────────────────────────────────────────────
+# Script: 024_bg_acs_join.R
+# Purpose: Attach ACS block-group stats to each rat sighting and summarize by block group
+# Inputs:  output/rats_enriched.geojson
+#          Census API key in CENSUS_API_KEY
+# Outputs: output/rat_with_bg_ACS_point.csv
+#          output/bg_calls_ACS_summary.csv
+# Depends: sf, dplyr, readr, stringr, tidycensus
+# ───────────────────────────────────────────────────────────
 
-## 0) Libraries ---------------------------------------------------------------
-# install.packages(c("sf", "dplyr", "readr", "stringr", "tidycensus"))
+# 1. Load spatial, census, and data libraries
 library(sf)
 library(dplyr)
 library(readr)
 library(stringr)
 library(tidycensus)
 
-## 1) Download 2023 ACS block‑group stats --------------------------------------
+# 2. Fetch 2023 ACS block-group data (with geometry)
 census_api_key(Sys.getenv("CENSUS_API_KEY"), install = FALSE)
-
 vars <- c(
-  pop_tot    = "B01003_001",  # total population
-  med_income = "B19013_001",  # median household income (USD)
-  pov_count  = "B17010_002"   # persons below poverty
+  pop_tot    = "B01003_001",
+  med_income = "B19013_001",
+  pov_count  = "B17010_002"
 )
-
-message("📥  Pulling 2023 ACS block‑group data …")
 acs_bg <- get_acs(
   geography = "block group",
   variables = vars,
   year      = 2023,
   state     = "NY",
-  county    = c("Bronx", "Kings", "New York", "Queens", "Richmond"),
+  county    = c("Bronx","Kings","New York","Queens","Richmond"),
   output    = "wide",
   geometry  = TRUE
 ) %>%
-  rename_with(~ str_remove(.x, "E$"), ends_with("E")) %>%  # drop trailing E
+  rename_with(~ str_remove(.x, "E$"), ends_with("E")) %>%
   select(GEOID, pop_tot, med_income, pov_count) %>%
-  st_transform(crs = 4326)  # match rat points (WGS84)
+  st_transform(crs = 4326)
 
-## 2) Load enriched rat points --------------------------------------------------
-message("📥  Reading rats_enriched.geojson …")
+# 3. Read enriched rat points
 rats <- st_read("output/rats_enriched.geojson", quiet = TRUE)
 
-## 3) Spatial join rats → block groups -----------------------------------------
-message("🔗  Joining rat points to BGs …")
+# 4. Spatial-join rat points to block groups (attach ACS fields)
 rat_bg_join <- st_join(
   rats,
   acs_bg,
-  join = st_intersects,  # includes boundary‑touching points
+  join = st_intersects,
   left = TRUE
 ) %>%
-  rename_with(~ str_remove(.x, "\\.y$"), ends_with(".y")) %>%  # keep clean names
+  rename_with(~ str_remove(.x, "\\.y$"), ends_with(".y")) %>%
   select(-ends_with(".x"))
 
-## 4) Write point‑level CSV -----------------------------------------------------
+# 5. Export point-level rat+ACS CSV
 rat_bg_point_df <- st_drop_geometry(rat_bg_join)
 write_csv(rat_bg_point_df, "output/rat_with_bg_ACS_point.csv")
-message("✅  Saved point‑level rat+ACS → output/rat_with_bg_ACS_point.csv (",
-        scales::comma(nrow(rat_bg_point_df)), " rows)")
+message("Wrote point-level rat+ACS data: ", nrow(rat_bg_point_df), " rows")
 
-## 5) Summarise by block group --------------------------------------------------
-message("📊  Building BG‑level summary …")
+# 6. Summarize calls and ACS metrics by block group, compute rate per 10k
 bg_summary <- rat_bg_point_df %>%
   group_by(GEOID) %>%
   summarise(
     calls      = n(),
-    pop_tot    = first(pop_tot),    # identical within BG
+    pop_tot    = first(pop_tot),
     med_income = first(med_income),
     pov_count  = first(pov_count)
   ) %>%
@@ -78,5 +66,4 @@ bg_summary <- rat_bg_point_df %>%
   mutate(rate_per_10k = calls / pop_tot * 10000)
 
 write_csv(bg_summary, "output/bg_calls_ACS_summary.csv")
-message("✅  Saved BG summary → output/bg_calls_ACS_summary.csv (",
-        scales::comma(nrow(bg_summary)), " rows)")
+message("Wrote BG summary data: ", nrow(bg_summary), " block groups")

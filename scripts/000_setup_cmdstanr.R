@@ -1,63 +1,43 @@
-# 000_setup_cmdstanr.R
-#
-# This script gets **CmdStanR** up and running on Windows so you can compile
-# and run Stan models from R.
-#
-# What happens, step by step:
-#   1. Install the *R package* **cmdstanr** (one-time).
-#   2. Make sure R can find a C++ compiler (comes with RTools).
-#   3. Download & build the CmdStan C++ source (only first time; ~1 GB).
-#   4. Compile the tiny built-in Bernoulli example model.
-#   5. Run a quick 8-data-point MCMC sample to prove everything works.
-#
-# Re-running is safe: most steps notice they’re already done and skip.
-# -----------------------------------------------------------------------------
+# ───────────────────────────────────────────────────────────
+# Script: 000_setup_cmdstanr.R
+# Purpose: Install and verify CmdStanR tooling on Windows
+# Inputs:  None
+# Outputs: Compiled Bernoulli example model; MCMC fit on toy data
+# Depends: cmdstanr (R package), RTools (C++ compiler)
+# ───────────────────────────────────────────────────────────
 
-# 1) Install cmdstanr if it’s missing ------------------------------------------
+# 1. Install CmdStanR package if missing
 if (!requireNamespace("cmdstanr", quietly = TRUE)) {
   install.packages(
     "cmdstanr",
     repos = c("https://mc-stan.org/r-packages/", getOption("repos"))
   )
 } else {
-  message("cmdstanr already installed — nice!")
+  message("cmdstanr already installed — skipping install.")
 }
 
-# 2) Load the package so we can call its helpers --------------------------------
+# 2. Load CmdStanR so we can use its helper functions
 library(cmdstanr)
 
-# 3) Check that the C++ toolchain (gcc/make) is visible to R --------------------
-#    `fix = TRUE` tries to patch common PATH problems for you.
+# 3. Ensure a working C++ toolchain is visible to R (attempt fixes if needed)
 cmdstanr::check_cmdstan_toolchain(fix = TRUE)
 
-# 4) Download + build CmdStan itself -------------------------------------------
-#    `overwrite = FALSE` means “skip if the same version is already built”.
+# 4. Download and build the CmdStan C++ source (skip if already built)
 cmdstanr::install_cmdstan(overwrite = FALSE)
 
-# 5) Compile the built-in Bernoulli model --------------------------------------
-stan_file <- file.path(
-  cmdstanr::cmdstan_path(),
-  "examples", "bernoulli", "bernoulli.stan"
-)
+# 5. Compile the built-in Bernoulli example model as a sanity check
+stan_file <- file.path(cmdstanr::cmdstan_path(), "examples", "bernoulli", "bernoulli.stan")
 mod <- cmdstanr::cmdstan_model(stan_file)
-message("Compiled Bernoulli model to: ", mod$exe_file())
+message("CmdStan model compiled to: ", mod$exe_file())
 
-# 6) Run a super-small sample (takes a few seconds) ----------------------------
-data_list <- list(
-  N = 8,
-  y = c(1, 0, 1, 1, 0, 0, 1, 0)
-)
-fit <- mod$sample(
-  data    = data_list,
-  seed    = 123,   # reproducible each run
-  refresh = 0      # keep console output minimal
-)
+# 6. Run a brief MCMC sample on the example model
+data_list <- list(N = 8, y = c(1,0,1,1,0,0,1,0))
+fit <- mod$sample(data = data_list, seed = 123, refresh = 0)
 
-# 7) Print the summary for the only parameter, `theta` -------------------------
+# 7. Print posterior summary for the only parameter, theta
 message("Posterior summary for 'theta':")
 print(fit$summary(variables = "theta"))
 
-# 8) (Optional) Delete the compiled executable ----------------------------------
-#    Comment this out if you’d rather keep it and skip recompilation later.
+# 8. (Optional) Remove the compiled executable to save space
 file.remove(mod$exe_file())
-message("Deleted the Bernoulli executable.")
+message("Deleted example executable.")
